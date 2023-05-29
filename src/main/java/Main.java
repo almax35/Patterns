@@ -1,6 +1,9 @@
 public class Main {
     public static void main(String[] args) {
-        // department add statistics
-        //
+        Department department = new Department();
+        RectalProxy rectalProxy = new RectalProxy();
+        department.addSubscriber(rectalProxy);
+        department.notifySubscribers();
+        rectalProxy.checkStudents();
     }
 }
