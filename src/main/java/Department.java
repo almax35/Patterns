@@ -1,18 +1,13 @@
-// add student
-// update student
-// delete student
-
-
 import dbutils.ConnectionFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Department implements Publisher {
-
     private final List<Subscriber> subscribers = new ArrayList<>();
 
     @Override
@@ -38,7 +33,48 @@ public class Department implements Publisher {
                     "INSERT INTO students (student_name, average_score) VALUES (?, ?)");
             statement.setString(1, student.getName());
             statement.setDouble(2, student.getAverageScore());
-            statement.executeQuery();
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateStudentScore(Student student, Double score) {
+        try (Connection connection = new ConnectionFactory().createConnection()) {
+            PreparedStatement statement = connection.prepareStatement(
+                    "SELECT * FROM students WHERE student_name = ? AND average_score = ?");
+            statement.setString(1, student.getName());
+            statement.setDouble(2, student.getAverageScore());
+            ResultSet studentToUpdate = statement.executeQuery();
+
+            if (studentToUpdate.next()) {
+                statement = connection.prepareStatement("UPDATE students SET average_score = ? WHERE student_id = ?");
+                statement.setDouble(1, score);
+                statement.setInt(2, studentToUpdate.getInt(1));
+                statement.execute();
+            } else {
+                System.out.println("There is no such student in DB");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteStudent(Student student) {
+        try (Connection connection = new ConnectionFactory().createConnection()) {
+            PreparedStatement statement = connection.prepareStatement(
+                    "SELECT * FROM students WHERE student_name = ? AND average_score = ?");
+            statement.setString(1, student.getName());
+            statement.setDouble(2, student.getAverageScore());
+            ResultSet studentToDelete = statement.executeQuery();
+
+            if (studentToDelete.next()) {
+                statement = connection.prepareStatement("DELETE FROM students WHERE student_id = ?");
+                statement.setInt(1, studentToDelete.getInt(1));
+                statement.executeUpdate();
+            } else {
+                System.out.println("There is no such student in DB");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
