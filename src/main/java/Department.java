@@ -9,9 +9,15 @@ import java.util.List;
 
 public class Department implements Publisher {
     private final List<Subscriber> subscribers = new ArrayList<>();
+    private ResultSet allStudents;
+
+    public ResultSet getStudents() {
+        return allStudents;
+    }
 
     @Override
     public void notifySubscribers() {
+        allStudents = getAllStudents();
         for (Subscriber subscriber : subscribers) {
             subscriber.update(this);
         }
@@ -34,6 +40,7 @@ public class Department implements Publisher {
             statement.setString(1, student.getName());
             statement.setDouble(2, student.getAverageScore());
             statement.execute();
+            allStudents = getAllStudents();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -52,6 +59,7 @@ public class Department implements Publisher {
                 statement.setDouble(1, score);
                 statement.setInt(2, studentToUpdate.getInt(1));
                 statement.execute();
+                allStudents = getAllStudents();
             } else {
                 System.out.println("There is no such student in DB");
             }
@@ -72,11 +80,24 @@ public class Department implements Publisher {
                 statement = connection.prepareStatement("DELETE FROM students WHERE student_id = ?");
                 statement.setInt(1, studentToDelete.getInt(1));
                 statement.executeUpdate();
+                allStudents = getAllStudents();
             } else {
                 System.out.println("There is no such student in DB");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private ResultSet getAllStudents() {
+        ResultSet rs = null;
+        try (Connection connection = new ConnectionFactory().createConnection()) {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM students");
+            rs = statement.executeQuery();
+            return rs;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rs;
     }
 }
