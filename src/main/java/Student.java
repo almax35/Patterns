@@ -6,4 +6,12 @@ public class Student {
         this.name = name;
         this.averageScore = averageScore;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getAverageScore() {
+        return averageScore;
+    }
 }
