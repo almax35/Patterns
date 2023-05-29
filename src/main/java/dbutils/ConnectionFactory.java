@@ -1,4 +1,4 @@
-package DataBase_Utils;
+package dbutils;
 
 import org.postgresql.ds.PGSimpleDataSource;
 
@@ -7,8 +7,7 @@ import java.sql.SQLException;
 
 public class ConnectionFactory extends AbstractFactory {
     public Connection createConnection() throws SQLException {
-        PGSimpleDataSource dataSource= DataBase_Utils.Connection.getInstance();
-        Connection connection= dataSource.getConnection();
-        return connection;
+        PGSimpleDataSource dataSource = dbutils.Connection.getInstance();
+        return dataSource.getConnection();
     }
 }
